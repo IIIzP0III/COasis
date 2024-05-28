@@ -66,7 +66,7 @@ public class Z extends JavaPlugin {
 
         //phase 1
         //
-        Random rnd = new Math.random();
+        Random rnd = new Random();
         int surID = 0;
         int infID = 0;
         for(Player p : players) {
@@ -87,18 +87,26 @@ public class Z extends JavaPlugin {
     //optimize later
     public boolean showLobby(Player p) {
         broadcast("Players in survivor");
+        StringBuilder survivor = new StringBuilder("Players in spectator: ");
         for(Player pl : survivors) {
-            broadcast(pl.getDisplayName());
+            survivor.append(" | ").append(pl.getDisplayName());
         }
+        broadcast(survivor.toString());
         broadcast("Players in spectator");
+        StringBuilder spectators = new StringBuilder("Players in spectator: ");
         for(Player pl : spectator) {
-            broadcast(pl.getDisplayName());
+            spectators.append(" | ").append(pl.getDisplayName());
         }
-        broadcast("Players in infected ");
-        for(Player pl : infected) {
-            broadcast(pl.getDisplayName());
-        }
+        broadcast(spectators.toString());
 
+        broadcast("Players in infected ");
+        StringBuilder infecteds = new StringBuilder("Players in infected: ");
+        for(Player pl : infected) {
+            infecteds.append(" | ").append(pl.getDisplayName());
+        }
+        broadcast(infecteds.toString());
+
+        return false;
     }
     public void broadcast(String s) {
         for(Player p : Bukkit.getOnlinePlayers()) {
