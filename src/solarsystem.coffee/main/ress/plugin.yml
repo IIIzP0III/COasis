@@ -1,0 +1,12 @@
+
+author: III_zP0_III
+name: zPZom
+version: 0.1.0
+load: POSTWORLD
+main: solarsytem.coffee.main.java.Z
+database: true
+
+commands:
+  Zomb:
+    description: debug command
+    permission: zPZom.zP
