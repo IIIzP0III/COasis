@@ -7,6 +7,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Random;
+
 
 public class Z extends JavaPlugin {
 
@@ -55,15 +57,30 @@ public class Z extends JavaPlugin {
 
     public boolean runZom() {
 
+        int ID = 0;
         for(Player p : Bukkit.getOnlinePlayers()) {
-            players[0] = p;
+            players[ID] = p;
             broadcast("Player [ " + p.getName() + " ] added to lobby");
+            ID++;
         }
 
         //phase 1
         //
-
-
+        Random rnd = new Math.random();
+        int surID = 0;
+        int infID = 0;
+        for(Player p : players) {
+            if(rnd.nextBoolean()) {
+                survivors[surID] = p;
+                surID++;
+            } else {
+                infected[infID] = p;
+                infID++;
+            }
+        }
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            showLobby(p);
+        }
         return true;
     }
 
