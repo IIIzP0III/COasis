@@ -41,7 +41,7 @@ public class Z extends JavaPlugin {
                     runZom();
                     player.sendMessage("new round");
                 case "showLobby":
-                    showLobby(player);
+                    showLobbyforplayer(player);
                 default:
                     player.sendMessage("ooO");
             }
@@ -78,14 +78,13 @@ public class Z extends JavaPlugin {
                 infID++;
             }
         }
-        for(Player p : Bukkit.getOnlinePlayers()) {
-            showLobby(p);
-        }
+            showLobby();
+        //
         return true;
     }
 
     //optimize later
-    public boolean showLobby(Player p) {
+    public boolean showLobby() {
         broadcast("Players in survivor");
         StringBuilder survivor = new StringBuilder("Players in spectator: ");
         for(Player pl : survivors) {
@@ -108,10 +107,39 @@ public class Z extends JavaPlugin {
 
         return false;
     }
+    public boolean showLobbyforplayer(Player p) {
+        echo(p,"Players in survivor");
+        StringBuilder survivor = new StringBuilder("Players in spectator: ");
+        for(Player pl : survivors) {
+            survivor.append(" | ").append(pl.getDisplayName());
+        }
+        echo(p,survivor.toString());
+        echo(p,"Players in spectator");
+        StringBuilder spectators = new StringBuilder("Players in spectator: ");
+        for(Player pl : spectator) {
+            spectators.append(" | ").append(pl.getDisplayName());
+        }
+        echo(p,spectators.toString());
+
+        echo(p,"Players in infected ");
+        StringBuilder infecteds = new StringBuilder("Players in infected: ");
+        for(Player pl : infected) {
+            infecteds.append(" | ").append(pl.getDisplayName());
+        }
+        echo(p,infecteds.toString());
+
+        return false;
+    }
     public void broadcast(String s) {
         for(Player p : Bukkit.getOnlinePlayers()) {
             p.sendMessage(s);
         }
+    }
+    public void echo(Player p, String s) {
+        p.sendMessage(s);
+    }
+    public void resetround() {
+
     }
 
 }
