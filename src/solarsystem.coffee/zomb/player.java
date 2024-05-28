@@ -1,4 +1,11 @@
 package solarsystem.coffee.zomb;
 
-public class player {
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class player extends JavaPlugin {
+
+    //define player behaviour for infected and survivors
+
+    //use Logblock to make players only able to break there own property
+
 }

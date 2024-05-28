@@ -82,6 +82,31 @@ public class Z extends JavaPlugin {
         //
         return true;
     }
+    public void runround() {
+
+        //init timer
+
+
+        for(Player p : infected) {
+            //transport to infected spawnarea
+            p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,1,1,true,false));
+            p.sendMessage("You are infected with the Virus - Your desire for blood has awakened - Infect Survivors!");
+        }
+        for(Player p : spectator) {
+            p.setFlying(true);
+            p.setAllowFlight(true);
+            //transport spectators
+            p.sendMessage("spectator - round initialized");
+        }
+        for(Player p : survivors) {
+            //transport survivors
+            p.sendMessage("You are a survivor defend yourself against the Virus - the undead have awakened");
+        }
+
+        broadcast("round begins");
+
+
+    }
 
     //optimize later
     public boolean showLobby() {
