@@ -11,6 +11,13 @@ import org.bukkit.potion.PotionEffectType;
 public class Z extends JavaPlugin {
 
 
+
+    public Player[] players = new Player[210];
+
+    public Player[] survivors = new Player[99];
+    public Player[] infected = new Player[99];
+    public Player[] spectator = new Player[99];
+
     @Override
     public void onEnable() {
         Bukkit.getConsoleSender().sendMessage("zP >Zom< loaded");
@@ -31,7 +38,8 @@ public class Z extends JavaPlugin {
                 case "runZom":
                     runZom();
                     player.sendMessage("new round");
-
+                case "showLobby":
+                    showLobby(player);
                 default:
                     player.sendMessage("ooO");
             }
@@ -47,13 +55,33 @@ public class Z extends JavaPlugin {
 
     public boolean runZom() {
 
-        Player[] players = new Player[210];
-
         for(Player p : Bukkit.getOnlinePlayers()) {
             players[0] = p;
             broadcast("Player [ " + p.getName() + " ] added to lobby");
         }
+
+        //phase 1
+        //
+
+
         return true;
+    }
+
+    //optimize later
+    public boolean showLobby(Player p) {
+        broadcast("Players in survivor");
+        for(Player pl : survivors) {
+            broadcast(pl.getDisplayName());
+        }
+        broadcast("Players in spectator");
+        for(Player pl : spectator) {
+            broadcast(pl.getDisplayName());
+        }
+        broadcast("Players in infected ");
+        for(Player pl : infected) {
+            broadcast(pl.getDisplayName());
+        }
+
     }
     public void broadcast(String s) {
         for(Player p : Bukkit.getOnlinePlayers()) {
