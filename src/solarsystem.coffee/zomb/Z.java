@@ -1,5 +1,6 @@
 package solarsystem.coffee.zomb;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -131,6 +132,15 @@ public class Z extends JavaPlugin {
         broadcast(infecteds.toString());
 
         return false;
+    }
+    public boolean teleportPlayer(Player p, int x, int y, int z, String world, String server) {
+        Location loc = p.getLocation();
+        loc.setWorld(Bukkit.getWorld(world));
+        loc.setX((double) x);
+        loc.setY((double) y);
+        loc.setZ((double) z);
+        p.teleport(loc);
+        return true;
     }
     public boolean showLobbyforplayer(Player p) {
         echo(p,"Players in survivor");
