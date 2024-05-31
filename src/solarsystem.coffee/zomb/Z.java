@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 
@@ -78,38 +79,27 @@ public class Z extends JavaPlugin {
                         }
                         if(args[0].equalsIgnoreCase("set")) {
                             Player p = null;
-                            switch (args[1].toString()) {
-                                case "Inf":
-                                    p = getPlayerbyString(args[2]);
-                                    if (p != null) {
-                                        player.sendMessage("found " + p.getName());
-                                        set(p, args);
-                                        player.sendMessage("set to infected");
-                                    } else {
-                                        player.sendMessage("player not found");
-                                    }
-                                    break;
-                                case "Su":
-                                    p = getPlayerbyString(args[2]);
-                                    if (p != null) {
-                                        set(p, args);
-                                        player.sendMessage("set to su");
-                                    } else {
-                                        player.sendMessage("player not found");
-                                    }
-                                    break;
-                                case "sp":
-                                    p = getPlayerbyString(args[2]);
-                                    if (p != null) {
-                                        set(p, args);
-                                        player.sendMessage("set to spectator");
-                                    } else {
-                                        player.sendMessage("player not found");
-                                    }
-                                    break;
-                                default:
-                                    p.sendMessage("Invalid arguments");
-                                    break;
+                            p = getPlayerbyString(args[2]);
+                            if (p != null) {
+                                switch (args[1]) {
+                                    case "Inf":
+                                            set(p, args);
+                                            player.sendMessage(p.getDisplayName() + "set to infected");
+                                        break;
+                                    case "Su":
+                                            set(p, args);
+                                            player.sendMessage(p.getDisplayName() +"set to su");
+                                        break;
+                                    case "sp":
+                                            set(p, args);
+                                            player.sendMessage(p.getDisplayName() + "set to spectator");
+                                        break;
+                                    default:
+                                        player.sendMessage("Invalid arguments");
+                                        break;
+                                }
+                            } else {
+                                player.sendMessage("player not found");
                             }
                         }
 
