@@ -1,5 +1,4 @@
 package solarsystem.coffee.zomb;
-import jdk.jfr.Timestamp;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -9,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 
 
@@ -46,6 +45,8 @@ public class Z extends JavaPlugin {
 
     //}
 
+    public int surID = 0;
+    public int infID = 0;
     @Override
     public boolean onCommand(CommandSender interpreter, Command cmd, String input, String[] args) {
         if(interpreter instanceof Player) {
@@ -93,8 +94,8 @@ public class Z extends JavaPlugin {
         //phase 1
         //
         Random rnd = new Random();
-        int surID = 0;
-        int infID = 0;
+        surID = 0;
+        infID = 0;
         for(Player p : players) {
             if(p != null) {
                 if (rnd.nextBoolean()) {
@@ -131,9 +132,51 @@ public class Z extends JavaPlugin {
             p.sendMessage("You are a survivor defend yourself against the Virus - the undead have awakened");
         }
 
-        //broadcast("round begins");
+        broadcast("round begins");
 
 
+    }
+    public boolean setInf(Player p, boolean booly) {
+        boolean boooly = false;
+        int ID = 990;
+        if (booly) {
+            for (Player pl : infected) {
+                if (Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())) {
+                    boooly = true;
+                    break;
+                }
+            }
+            if(!boooly) {
+                infected[infID] = p;
+                int suID = 0;
+                for(Player pl : survivors) {
+
+                    if(Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())) {
+                        survivors[surID] = null;
+                    }
+                    surID++;
+                }
+            }
+        } else {
+            for (Player pl : survivors) {
+                if (Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())) {
+                    boooly = true;
+                    break;
+                }
+            }
+            if(!boooly) {
+                survivors[surID] = p;
+                int inID = 0;
+                for(Player pl : infected) {
+
+                    if(Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())) {
+                        infected[inID] = null;
+                    }
+                    inID++;
+                }
+            }
+
+        }
     }
 
     //optimize later
@@ -142,6 +185,9 @@ public class Z extends JavaPlugin {
             showLobbyforplayer(p);
         }
         return true;
+    }
+    public void onPlayerDeath() {
+
     }
     public boolean teleportPlayer(Player p, int x, int y, int z, String world, String server) {
         Location loc = p.getLocation();
