@@ -2,11 +2,21 @@
 author: III_zP0_III
 name: zPZom
 version: 0.1.0
+api-version: 1.20
 load: POSTWORLD
-main: solarsytem.coffee.main.java.Z
+main: solarsystem.coffee.zomb.Z
 database: true
 
 commands:
-  Zomb:
+  Z:
+    description: debug command
+    permission: zPZom.zP
+  zP:
+    description: debug command
+    permission: zPZom.zP
+  Zom:
+    description: debug command
+    permission: zPZom.zP
+  Zdebug:
     description: debug command
     permission: zPZom.zP

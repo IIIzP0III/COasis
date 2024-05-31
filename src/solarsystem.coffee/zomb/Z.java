@@ -1,4 +1,5 @@
 package solarsystem.coffee.zomb;
+import jdk.jfr.Timestamp;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -8,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Arrays;
 import java.util.Random;
 
 
@@ -17,9 +19,18 @@ public class Z extends JavaPlugin {
 
     public Player[] players = new Player[210];
 
-    public Player[] survivors = new Player[99];
-    public Player[] infected = new Player[99];
-    public Player[] spectator = new Player[99];
+    public Player[] survivors = new Player[990];
+    public Player[] infected = new Player[990];
+    public Player[] spectator = new Player[990];
+
+    public String Lobbyworld = "Lobby";
+    public String Playworld = "Playworld";
+
+
+
+    public static void main (String[] args){
+
+    }
 
     @Override
     public void onEnable() {
@@ -30,25 +41,39 @@ public class Z extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage("zP >Zom< disabled");
     }
 
+   // @Override
+    //public boolean onTick(){
+
+    //}
+
     @Override
     public boolean onCommand(CommandSender interpreter, Command cmd, String input, String[] args) {
         if(interpreter instanceof Player) {
             Player player = (Player) interpreter;
             switch(input) {
-                case "Z":
+                case "zP":
                     player.sendMessage("o>");
                     player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 300,1,true,true));
-                case "runZom":
-                    runZom();
-                    player.sendMessage("new round");
-                case "showLobby":
-                    showLobbyforplayer(player);
-                default:
-                    player.sendMessage("ooO");
+                case "zom":
+                    player.sendMessage("baaa");
+                    if(args.length > 0) {
+                        if(args[0].equalsIgnoreCase("runZom")) {
+                            runZom();
+                            player.sendMessage("new round");
+                        }
+                        if(args[0].equalsIgnoreCase("Lobby")) {
+                            showLobbyforplayer(player);
+                        }
+                        if(args[0].equalsIgnoreCase("P")) {
+                            player.sendMessage("Sh33pio");
+
+                        }
+                        if(args[0].equalsIgnoreCase("showLobby")){
+                            showLobbyforplayer(player);
+                        }
+
+                    }
             }
-
-
-
 
         } else {
             Bukkit.getConsoleSender().sendMessage("o> Console");
@@ -71,15 +96,17 @@ public class Z extends JavaPlugin {
         int surID = 0;
         int infID = 0;
         for(Player p : players) {
-            if(rnd.nextBoolean()) {
-                survivors[surID] = p;
-                surID++;
-            } else {
-                infected[infID] = p;
-                infID++;
+            if(p != null) {
+                if (rnd.nextBoolean()) {
+                    survivors[surID] = p;
+                    surID++;
+                } else {
+                    infected[infID] = p;
+                    infID++;
+                }
             }
         }
-            showLobby();
+           showLobby();
         //
         return true;
     }
@@ -104,34 +131,17 @@ public class Z extends JavaPlugin {
             p.sendMessage("You are a survivor defend yourself against the Virus - the undead have awakened");
         }
 
-        broadcast("round begins");
+        //broadcast("round begins");
 
 
     }
 
     //optimize later
     public boolean showLobby() {
-        broadcast("Players in survivor");
-        StringBuilder survivor = new StringBuilder("Players in spectator: ");
-        for(Player pl : survivors) {
-            survivor.append(" | ").append(pl.getDisplayName());
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            showLobbyforplayer(p);
         }
-        broadcast(survivor.toString());
-        broadcast("Players in spectator");
-        StringBuilder spectators = new StringBuilder("Players in spectator: ");
-        for(Player pl : spectator) {
-            spectators.append(" | ").append(pl.getDisplayName());
-        }
-        broadcast(spectators.toString());
-
-        broadcast("Players in infected ");
-        StringBuilder infecteds = new StringBuilder("Players in infected: ");
-        for(Player pl : infected) {
-            infecteds.append(" | ").append(pl.getDisplayName());
-        }
-        broadcast(infecteds.toString());
-
-        return false;
+        return true;
     }
     public boolean teleportPlayer(Player p, int x, int y, int z, String world, String server) {
         Location loc = p.getLocation();
@@ -143,27 +153,30 @@ public class Z extends JavaPlugin {
         return true;
     }
     public boolean showLobbyforplayer(Player p) {
-        echo(p,"Players in survivor");
-        StringBuilder survivor = new StringBuilder("Players in spectator: ");
+        StringBuilder survivor = new StringBuilder("Players in survivors: ");
         for(Player pl : survivors) {
-            survivor.append(" | ").append(pl.getDisplayName());
+            if (pl != null) {
+                survivor.append(" | ").append(pl.getDisplayName());
+            }
         }
         echo(p,survivor.toString());
-        echo(p,"Players in spectator");
         StringBuilder spectators = new StringBuilder("Players in spectator: ");
         for(Player pl : spectator) {
+            if (pl != null) {
             spectators.append(" | ").append(pl.getDisplayName());
+        }
         }
         echo(p,spectators.toString());
 
-        echo(p,"Players in infected ");
         StringBuilder infecteds = new StringBuilder("Players in infected: ");
         for(Player pl : infected) {
-            infecteds.append(" | ").append(pl.getDisplayName());
+            if (pl != null) {
+                infecteds.append(" | ").append(pl.getDisplayName());
+            }
         }
         echo(p,infecteds.toString());
 
-        return false;
+        return true;
     }
     public void broadcast(String s) {
         for(Player p : Bukkit.getOnlinePlayers()) {
