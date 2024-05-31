@@ -47,6 +47,7 @@ public class Z extends JavaPlugin {
 
     public int surID = 0;
     public int infID = 0;
+    public int spID = 0;
     @Override
     public boolean onCommand(CommandSender interpreter, Command cmd, String input, String[] args) {
         if(interpreter instanceof Player) {
@@ -82,7 +83,7 @@ public class Z extends JavaPlugin {
                                     p = getPlayerbyString(args[2]);
                                     if (p != null) {
                                         player.sendMessage("found " + p.getName());
-                                        setInf(p, true);
+                                        set(p, args);
                                         player.sendMessage("set to infected");
                                     } else {
                                         player.sendMessage("player not found");
@@ -91,7 +92,7 @@ public class Z extends JavaPlugin {
                                 case "Su":
                                     p = getPlayerbyString(args[2]);
                                     if (p != null) {
-                                        setInf(p, false);
+                                        set(p, args);
                                         player.sendMessage("set to su");
                                     } else {
                                         player.sendMessage("player not found");
@@ -100,7 +101,7 @@ public class Z extends JavaPlugin {
                                 case "sp":
                                     p = getPlayerbyString(args[2]);
                                     if (p != null) {
-                                        setInf(p, false);
+                                        set(p, args);
                                         player.sendMessage("set to spectator");
                                     } else {
                                         player.sendMessage("player not found");
@@ -183,10 +184,10 @@ public class Z extends JavaPlugin {
         }
         return null;
     }
-    public boolean setInf(Player p, boolean booly) {
+    public boolean set(Player p, String[] args) {
         int ID = 990;
         String UuID = p.getUniqueId().toString();
-        if (booly) {
+        if (args[3].equalsIgnoreCase("Inf")) {
             for (Player pl : infected) {
                 if (pl != null) {
                     if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
@@ -194,57 +195,51 @@ public class Z extends JavaPlugin {
                     }
                 }
             }
-                infected[infID] = p;
-                infID++;
-                int suID = 0;
-                for(Player pl : survivors) {
-                    if (pl != null) {
-                        if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
-                            survivors[suID] = null;
-                        }
-                    }
-                    suID++;
-                }
-                int specID = 0;
-                for(Player pl : spectator) {
-                    if(pl != null) {
-                        if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
-                            spectator[specID] = null;
-                        }
-                    }
-                    specID++;
-                }
-                return true;
-        } else {
+            infected[infID] = p;
+            infID++;
+            removePlayer(UuID, survivors);
+            removePlayer(UuID, spectator);
+            return true;
+        } else if (args[3].equalsIgnoreCase("Su")) {
             for (Player pl : survivors) {
-                if(pl != null) {
+                if (pl != null) {
                     if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
                         return false;
                     }
                 }
             }
-                survivors[surID] = p;
-                surID++;
-                int inID = 0;
-                for(Player pl : infected) {
-                    if(pl != null) {
-                        if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
-                            infected[inID] = null;
-                        }
+            survivors[surID] = p;
+            surID++;
+            removePlayer(UuID, infected);
+            removePlayer(UuID, spectator);
+            return true;
+        } else if (args[3].equalsIgnoreCase("sp")) {
+            for(Player pl : spectator) {
+                if (pl != null) {
+                    if(Objects.equals(pl.getUniqueId().toString(), UuID)) {
+                        return false;
                     }
-                    inID++;
                 }
-                int specID = 0;
-                for(Player pl : spectator) {
-                    if(pl != null) {
-                        if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
-                            spectator[specID] = null;
-                        }
-                    }
-                    specID++;
-                }
-                return true;
+            }
+            spectator[spID] = p;
+            spID++;
+            removePlayer(UuID, survivors);
+            removePlayer(UuID, infected);
+            return true;
         }
+        return false;
+    }
+    public boolean removePlayer(String UuID, Player[] playercontainer) {
+        int suID = 0;
+        for(Player p : playercontainer) {
+            if (p != null) {
+                if (Objects.equals(p.getUniqueId().toString(), UuID)) {
+                    playercontainer[suID] = null;
+                }
+            }
+            suID++;
+        }
+        return true;
     }
 
     //optimize later
