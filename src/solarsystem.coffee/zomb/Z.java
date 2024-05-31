@@ -78,6 +78,7 @@ public class Z extends JavaPlugin {
                         if(args[0].equalsIgnoreCase("setInf")) {
                             Player p = getPlayerbyString(args[1]);
                             if(p != null) {
+                                player.sendMessage("found " + p.getName());
                                 setInf(p, true);
                                 player.sendMessage("set to infected");
                             } else {
@@ -159,57 +160,69 @@ public class Z extends JavaPlugin {
     }
     public Player getPlayerbyString(String s) {
         for(Player pl : Bukkit.getOnlinePlayers()) {
-            if (pl.getName().toLowerCase() == s.toLowerCase()) {
+            if (pl.getName().toString().equalsIgnoreCase(s)) {
                 return pl;
-            } else {
-                return null;
             }
         }
+        return null;
     }
     public boolean setInf(Player p, boolean booly) {
         int ID = 990;
+        String UuID = p.getUniqueId().toString();
         if (booly) {
             for (Player pl : infected) {
-                if (Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())) {
-                    return false;
+                if (pl != null) {
+                    if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
+                        return false;
+                    }
                 }
             }
                 infected[infID] = p;
+                infID++;
                 int suID = 0;
                 for(Player pl : survivors) {
-
-                    if(Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())) {
-                        survivors[surID] = null;
+                    if (pl != null) {
+                        if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
+                            survivors[suID] = null;
+                        }
                     }
-                    surID++;
+                    suID++;
                 }
                 int specID = 0;
                 for(Player pl : spectator) {
-                    if(Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())){
-                        spectator[specID] = null;
+                    if(pl != null) {
+                        if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
+                            spectator[specID] = null;
+                        }
                     }
                     specID++;
                 }
                 return true;
         } else {
             for (Player pl : survivors) {
-                if (Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())) {
-                    return false;
+                if(pl != null) {
+                    if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
+                        return false;
+                    }
                 }
             }
                 survivors[surID] = p;
+                surID++;
                 int inID = 0;
                 for(Player pl : infected) {
-
-                    if(Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())) {
-                        infected[inID] = null;
+                    if(pl != null) {
+                        if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
+                            infected[inID] = null;
+                        }
                     }
                     inID++;
                 }
                 int specID = 0;
                 for(Player pl : spectator) {
-                    if(Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())){
-                        spectator[specID] = null;
+                    if(pl != null) {
+                        if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
+                            spectator[specID] = null;
+                        }
                     }
                     specID++;
                 }
@@ -218,11 +231,10 @@ public class Z extends JavaPlugin {
     }
 
     //optimize later
-    public boolean showLobby() {
+    public void showLobby() {
         for(Player p : Bukkit.getOnlinePlayers()) {
             showLobbyforplayer(p);
         }
-        return true;
     }
     public void onPlayerDeath() {
 
@@ -236,7 +248,7 @@ public class Z extends JavaPlugin {
         p.teleport(loc);
         return true;
     }
-    public boolean showLobbyforplayer(Player p) {
+    public void showLobbyforplayer(Player p) {
         StringBuilder survivor = new StringBuilder("Players in survivors: ");
         for(Player pl : survivors) {
             if (pl != null) {
@@ -260,7 +272,6 @@ public class Z extends JavaPlugin {
         }
         echo(p,infecteds.toString());
 
-        return true;
     }
     public void broadcast(String s) {
         for(Player p : Bukkit.getOnlinePlayers()) {
