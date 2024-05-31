@@ -75,23 +75,40 @@ public class Z extends JavaPlugin {
                         if(args[0].equalsIgnoreCase("baa")){
 
                         }
-                        if(args[0].equalsIgnoreCase("setInf")) {
-                            Player p = getPlayerbyString(args[1]);
-                            if(p != null) {
-                                player.sendMessage("found " + p.getName());
-                                setInf(p, true);
-                                player.sendMessage("set to infected");
-                            } else {
-                                player.sendMessage("player not found");
-                            }
-                        }
-                        if(args[0].equalsIgnoreCase("setSu")) {
-                            Player p =getPlayerbyString(args[1]);
-                            if(p != null) {
-                                setInf(p, false);
-                                player.sendMessage("set to su");
-                            } else {
-                                player.sendMessage("player not found");
+                        if(args[0].equalsIgnoreCase("set")) {
+                            Player p = null;
+                            switch (args[1].toString()) {
+                                case "Inf":
+                                    p = getPlayerbyString(args[2]);
+                                    if (p != null) {
+                                        player.sendMessage("found " + p.getName());
+                                        setInf(p, true);
+                                        player.sendMessage("set to infected");
+                                    } else {
+                                        player.sendMessage("player not found");
+                                    }
+                                    break;
+                                case "Su":
+                                    p = getPlayerbyString(args[2]);
+                                    if (p != null) {
+                                        setInf(p, false);
+                                        player.sendMessage("set to su");
+                                    } else {
+                                        player.sendMessage("player not found");
+                                    }
+                                    break;
+                                case "sp":
+                                    p = getPlayerbyString(args[2]);
+                                    if (p != null) {
+                                        setInf(p, false);
+                                        player.sendMessage("set to spectator");
+                                    } else {
+                                        player.sendMessage("player not found");
+                                    }
+                                    break;
+                                default:
+                                    p.sendMessage("Invalid arguments");
+                                    break;
                             }
                         }
 
