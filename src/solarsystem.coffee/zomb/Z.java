@@ -72,6 +72,27 @@ public class Z extends JavaPlugin {
                         if(args[0].equalsIgnoreCase("showLobby")){
                             showLobbyforplayer(player);
                         }
+                        if(args[0].equalsIgnoreCase("baa")){
+
+                        }
+                        if(args[0].equalsIgnoreCase("setInf")) {
+                            Player p = getPlayerbyString(args[1]);
+                            if(p != null) {
+                                setInf(p, true);
+                                player.sendMessage("set to infected");
+                            } else {
+                                player.sendMessage("player not found");
+                            }
+                        }
+                        if(args[0].equalsIgnoreCase("setSu")) {
+                            Player p =getPlayerbyString(args[1]);
+                            if(p != null) {
+                                setInf(p, false);
+                                player.sendMessage("set to su");
+                            } else {
+                                player.sendMessage("player not found");
+                            }
+                        }
 
                     }
             }
@@ -135,6 +156,15 @@ public class Z extends JavaPlugin {
         broadcast("round begins");
 
 
+    }
+    public Player getPlayerbyString(String s) {
+        for(Player pl : Bukkit.getOnlinePlayers()) {
+            if (pl.getName().toLowerCase() == s.toLowerCase()) {
+                return pl;
+            } else {
+                return null;
+            }
+        }
     }
     public boolean setInf(Player p, boolean booly) {
         boolean boooly = false;
