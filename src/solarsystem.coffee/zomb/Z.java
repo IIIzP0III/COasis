@@ -167,16 +167,13 @@ public class Z extends JavaPlugin {
         }
     }
     public boolean setInf(Player p, boolean booly) {
-        boolean boooly = false;
         int ID = 990;
         if (booly) {
             for (Player pl : infected) {
                 if (Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())) {
-                    boooly = true;
-                    break;
+                    return false;
                 }
             }
-            if(!boooly) {
                 infected[infID] = p;
                 int suID = 0;
                 for(Player pl : survivors) {
@@ -186,15 +183,20 @@ public class Z extends JavaPlugin {
                     }
                     surID++;
                 }
-            }
+                int specID = 0;
+                for(Player pl : spectator) {
+                    if(Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())){
+                        spectator[specID] = null;
+                    }
+                    specID++;
+                }
+                return true;
         } else {
             for (Player pl : survivors) {
                 if (Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())) {
-                    boooly = true;
-                    break;
+                    return false;
                 }
             }
-            if(!boooly) {
                 survivors[surID] = p;
                 int inID = 0;
                 for(Player pl : infected) {
@@ -204,8 +206,14 @@ public class Z extends JavaPlugin {
                     }
                     inID++;
                 }
-            }
-
+                int specID = 0;
+                for(Player pl : spectator) {
+                    if(Objects.equals(pl.getUniqueId().toString(), p.getUniqueId().toString())){
+                        spectator[specID] = null;
+                    }
+                    specID++;
+                }
+                return true;
         }
     }
 
