@@ -3,7 +3,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -15,16 +18,12 @@ import java.util.Random;
 
 public class Z extends JavaPlugin {
 
-
-
-    public Player[] players = new Player[210];
-
+    lobby l = new lobby();
     public Player[] survivors = new Player[990];
     public Player[] infected = new Player[990];
     public Player[] spectator = new Player[990];
 
     public String Lobbyworld = "Lobby";
-    public String Playworld = "Playworld";
 
 
 
@@ -62,17 +61,17 @@ public class Z extends JavaPlugin {
                     if(args.length > 0) {
                         if(args[0].equalsIgnoreCase("runZom")) {
                             runZom();
-                            player.sendMessage("new round");
                         }
                         if(args[0].equalsIgnoreCase("Lobby")) {
-                            showLobbyforplayer(player);
+                            l.showLobbyforplayer(player);
                         }
                         if(args[0].equalsIgnoreCase("P")) {
                             player.sendMessage("Sh33pio");
+                            player.setGravity(false);
 
                         }
                         if(args[0].equalsIgnoreCase("showLobby")){
-                            showLobbyforplayer(player);
+                            l.showLobbyforplayer(player);
                         }
                         if(args[0].equalsIgnoreCase("baa")){
 
@@ -113,32 +112,13 @@ public class Z extends JavaPlugin {
     }
 
     public boolean runZom() {
+        l.InLobby();
+        l.shuffle();
+        l.showLobby();
 
-        int ID = 0;
-        for(Player p : Bukkit.getOnlinePlayers()) {
-            players[ID] = p;
-            broadcast("Player [ " + p.getName() + " ] added to lobby");
-            ID++;
-        }
 
-        //phase 1
-        //
-        Random rnd = new Random();
-        surID = 0;
-        infID = 0;
-        for(Player p : players) {
-            if(p != null) {
-                if (rnd.nextBoolean()) {
-                    survivors[surID] = p;
-                    surID++;
-                } else {
-                    infected[infID] = p;
-                    infID++;
-                }
-            }
-        }
-           showLobby();
-        //
+
+
         return true;
     }
     public void runround() {
@@ -147,6 +127,10 @@ public class Z extends JavaPlugin {
 
 
         for(Player p : infected) {
+
+            p.setFoodLevel(9);
+            p.setSaturation((float) 9);
+
             //transport to infected spawnarea
             p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,1,1,true,false));
             p.sendMessage("You are infected with the Virus - Your desire for blood has awakened - Infect Survivors!");
@@ -231,13 +215,7 @@ public class Z extends JavaPlugin {
         }
         return true;
     }
-
-    //optimize later
-    public void showLobby() {
-        for(Player p : Bukkit.getOnlinePlayers()) {
-            showLobbyforplayer(p);
-        }
-    }
+///////
     public void onPlayerDeath() {
 
     }
@@ -249,31 +227,6 @@ public class Z extends JavaPlugin {
         loc.setZ((double) z);
         p.teleport(loc);
         return true;
-    }
-    public void showLobbyforplayer(Player p) {
-        StringBuilder survivor = new StringBuilder("Players in survivors: ");
-        for(Player pl : survivors) {
-            if (pl != null) {
-                survivor.append(" | ").append(pl.getDisplayName());
-            }
-        }
-        echo(p,survivor.toString());
-        StringBuilder spectators = new StringBuilder("Players in spectator: ");
-        for(Player pl : spectator) {
-            if (pl != null) {
-            spectators.append(" | ").append(pl.getDisplayName());
-        }
-        }
-        echo(p,spectators.toString());
-
-        StringBuilder infecteds = new StringBuilder("Players in infected: ");
-        for(Player pl : infected) {
-            if (pl != null) {
-                infecteds.append(" | ").append(pl.getDisplayName());
-            }
-        }
-        echo(p,infecteds.toString());
-
     }
     public void broadcast(String s) {
         for(Player p : Bukkit.getOnlinePlayers()) {
