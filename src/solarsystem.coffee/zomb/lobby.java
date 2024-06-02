@@ -2,6 +2,8 @@ package solarsystem.coffee.zomb;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Random;
 
@@ -24,12 +26,19 @@ public class lobby extends Z {
     }
 
     public lobby InLobby(){
+        players = new Player[990];
+
+        survivors = new Player[990];
+        infected = new Player[990];
+        spectator = new Player[990];
+        
         int ID = 0;
         for(Player p : Bukkit.getOnlinePlayers()) {
             players[ID] = p;
             broadcast("Player [ " + p.getName() + " ] added to lobby");
             ID++;
         }
+        
         return this;
     }
     public void shuffle(){
@@ -39,7 +48,7 @@ public class lobby extends Z {
         infID = 0;
         for(Player p : players) {
             if(p != null) {
-                if (rnd.nextBoolean()) {
+                if (rnd.nextInt() > 0.33) {
                     survivors[surID] = p;
                     surID++;
                 } else {
@@ -50,6 +59,29 @@ public class lobby extends Z {
         }
     }
 
+    public void lobbyrun() {
+        for(Player p : infected) {
+
+            p.setFoodLevel(9);
+            p.setSaturation((float) 9);
+
+            //transport to infected spawnarea
+            p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,1,1,true,false));
+            p.sendMessage("You are infected with the Virus - Your desire for blood has awakened - Infect Survivors!");
+        }
+        for(Player p : spectator) {
+            p.setFlying(true);
+            p.setAllowFlight(true);
+            //transport spectators
+            p.sendMessage("spectator - round initialized");
+        }
+        for(Player p : survivors) {
+            //transport survivors
+            p.sendMessage("You are a survivor defend yourself against the Virus - the undead have awakened");
+        }
+
+        broadcast("round begins");
+    }
 
     public void showLobbyforplayer(Player p) {
         StringBuilder survivor = new StringBuilder("Players in survivors: ");

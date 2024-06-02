@@ -115,40 +115,8 @@ public class Z extends JavaPlugin {
         l.InLobby();
         l.shuffle();
         l.showLobby();
-
-
-
-
+        l.lobbyrun();
         return true;
-    }
-    public void runround() {
-
-        //init timer
-
-
-        for(Player p : infected) {
-
-            p.setFoodLevel(9);
-            p.setSaturation((float) 9);
-
-            //transport to infected spawnarea
-            p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,1,1,true,false));
-            p.sendMessage("You are infected with the Virus - Your desire for blood has awakened - Infect Survivors!");
-        }
-        for(Player p : spectator) {
-            p.setFlying(true);
-            p.setAllowFlight(true);
-            //transport spectators
-            p.sendMessage("spectator - round initialized");
-        }
-        for(Player p : survivors) {
-            //transport survivors
-            p.sendMessage("You are a survivor defend yourself against the Virus - the undead have awakened");
-        }
-
-        broadcast("round begins");
-
-
     }
     public Player getPlayerbyString(String s) {
         for(Player pl : Bukkit.getOnlinePlayers()) {
