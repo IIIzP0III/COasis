@@ -27,11 +27,6 @@ public class playerDamageByPlayer extends EntityDamageByEntityEvent {
         boolean selfIsZombie = (this.entity.getType() == EntityType.ZOMBIE); //replace with Playerz
         boolean attackerIsZombie = (this.getDamager().getType() == EntityType.ZOMBIE);
 
-        if(selfIsZombie && attackerIsZombie) {
-            this.setCancelled(true);
-        } else if(!selfIsZombie && !attackerIsZombie) {
-            this.setCancelled(true);
-        }
 
         double remaining = damage;
         double oldRemaining = this.getDamage(EntityDamageEvent.DamageModifier.BASE);

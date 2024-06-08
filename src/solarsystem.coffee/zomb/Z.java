@@ -3,14 +3,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.EventListener;
 import java.util.Objects;
 
 
@@ -23,6 +26,10 @@ public class Z extends JavaPlugin {
 
     public String Lobbyworld = "Lobby";
 
+    public String ver = "0.1.3";
+
+
+
 
 
     public static void main (String[] args){
@@ -32,6 +39,9 @@ public class Z extends JavaPlugin {
     @Override
     public void onEnable() {
         Bukkit.getConsoleSender().sendMessage("zP >Zom< loaded");
+        Bukkit.getConsoleSender().sendMessage("Version: " + ver);
+        getServer().getPluginManager().registerEvents(new o(), this);
+
     }
     @Override
     public void onDisable() {
@@ -170,36 +180,6 @@ public class Z extends JavaPlugin {
         }
         return null;
     }
-    @EventHandler
-    public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
-        String UUID = event.getDamager().getUniqueId().toString();
-        String Uuid = event.getEntity().getUniqueId().toString();
-
-        boolean canceled = true;
-
-        //check infection stat
-        boolean selfIsZombie = false;
-        if(event.getEntity().getType() == EntityType.ZOMBIE) { selfIsZombie = true; }
-        if(!selfIsZombie && event.getEntity().getType() == EntityType.PLAYER) { for(Player p : l.infected) { if (p.getUniqueId().toString() == UUID) { selfIsZombie = true;}}}//replace with Playerz
-
-        boolean attackerIsZombie = false;
-        if (event.getDamager().getType() == EntityType.ZOMBIE) { attackerIsZombie = true; }
-        if(!attackerIsZombie && event.getDamager().getType() == EntityType.PLAYER) { for(Player p : l.infected) { if (p.getUniqueId().toString() == UUID) { attackerIsZombie = true;}}}
-
-        //cancel if same
-        if((selfIsZombie && attackerIsZombie) || (!selfIsZombie && !attackerIsZombie)) {
-            canceled = true;
-        }
-
-        //cancel
-        if!(overwrite) {
-        if (canceled) {
-            event.setCancelled(true);
-        }
-        } else {
-            event.setCancelled(overwritepvp);
-        }
-    }
     public boolean set(Player p, String[] args) {
         int ID = 990;
         String UuID = p.getUniqueId().toString();
@@ -281,6 +261,39 @@ public class Z extends JavaPlugin {
     }
     public void resetround() {
 
+    }
+    public class o implements Listener {
+
+        @EventHandler
+        public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
+            String UUID = event.getDamager().getUniqueId().toString();
+            String Uuid = event.getEntity().getUniqueId().toString();
+
+            boolean canceled = true;
+
+            //check infection stat
+            boolean selfIsZombie = false;
+            if(event.getEntity().getType() == EntityType.ZOMBIE) { selfIsZombie = true; }
+            if(!selfIsZombie && event.getEntity().getType() == EntityType.PLAYER) { for(Player p : l.infected) { if (p.getUniqueId().toString() == UUID) { selfIsZombie = true;}}}//replace with Playerz
+
+            boolean attackerIsZombie = false;
+            if (event.getDamager().getType() == EntityType.ZOMBIE) { attackerIsZombie = true; }
+            if(!attackerIsZombie && event.getDamager().getType() == EntityType.PLAYER) { for(Player p : l.infected) { if (p.getUniqueId().toString() == UUID) { attackerIsZombie = true;}}}
+
+            //cancel if same
+            if((selfIsZombie && attackerIsZombie) || (!selfIsZombie && !attackerIsZombie)) {
+                canceled = true;
+            }
+
+            //cancel
+            if(!overwrite) {
+                if (canceled) {
+                    event.setCancelled(true);
+                }
+            } else {
+                event.setCancelled(overwritepvp);
+            }
+        }
     }
 
 }
