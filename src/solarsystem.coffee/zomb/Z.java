@@ -3,17 +3,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Locale;
 import java.util.Objects;
-import java.util.Random;
 
 
 public class Z extends JavaPlugin {
@@ -48,6 +46,12 @@ public class Z extends JavaPlugin {
     public int surID = 0;
     public int infID = 0;
     public int spID = 0;
+
+
+    public boolean overwrite = false;
+    public boolean overwritepvp = false;
+
+
     @Override
     public boolean onCommand(CommandSender interpreter, Command cmd, String input, String[] args) {
         if(interpreter instanceof Player) {
@@ -70,8 +74,38 @@ public class Z extends JavaPlugin {
                             player.setGravity(false);
 
                         }
-                        if(args[0].equalsIgnoreCase("showLobby")){
-                            l.showLobbyforplayer(player);
+                        if(args[0].equalsIgnoreCase("debug")){
+                            if(args.length > 1) {
+                                if(args[1].equalsIgnoreCase("setoverwrite")) {
+                                if ("true".equalsIgnoreCase(args[2].toString())) {
+                                   overwrite = true;
+                                } else if ("false".equalsIgnoreCase(args[2].toString())) {
+                                    overwrite = false;
+                                } else {
+                                    player.sendMessage("incorrect usage");
+                                }
+                                if(overwrite) { player.sendMessage("Overwrite [true]"); }
+                                else {
+                                    player.sendMessage("Overwrite [false]");
+                                }
+                                } else if(args[1].equalsIgnoreCase("overwritepvp")) {
+                                    if ("true".equalsIgnoreCase(args[2].toString())) {
+                                        overwritepvp = true;
+                                    } else if ("false".equalsIgnoreCase(args[2].toString())) {
+                                        overwritepvp = false;
+                                    } else {
+                                        player.sendMessage("incorrect usage");
+                                    }
+                                    if(overwritepvp) { player.sendMessage("Overwrite PVP [true]"); }
+                                    else {
+                                        player.sendMessage("Overwrite PVP [false]");
+                                    }
+                                }
+                            } else {
+                                player.sendMessage("Debug Command /zom debug [cmds]");
+                                player.sendMessage("Debug cmds [setoverwrite:overwritepvp] [true|false]");
+                                player.sendMessage("both overwrites have to be active to be affective");
+                            }
                         }
                         if(args[0].equalsIgnoreCase("baa")){
 
@@ -84,22 +118,32 @@ public class Z extends JavaPlugin {
                                     case "Inf":
                                             set(p, args);
                                             player.sendMessage(p.getDisplayName() + "set to infected");
-                                        break;
+                                        return true;
                                     case "Su":
                                             set(p, args);
                                             player.sendMessage(p.getDisplayName() +"set to su");
-                                        break;
+                                        return true;
                                     case "sp":
                                             set(p, args);
                                             player.sendMessage(p.getDisplayName() + "set to spectator");
-                                        break;
+                                        return true;
                                     default:
                                         player.sendMessage("Invalid arguments");
                                         break;
                                 }
                             } else {
                                 player.sendMessage("player not found");
+                                return false;
                             }
+                        }
+                        if(args[0].equalsIgnoreCase("help")) {
+                            String[] s = new String[13];
+                            s[0] = "<<< Zom | Commands >>> ";
+                            s[1] = "/runZom";
+                            s[2] = "/Lobby";
+                            s[3] = "/set (Inf|Su|sp) Player";
+                            s[4] = "/baa";
+                            player.sendMessage(s);
                         }
 
                     }
@@ -125,6 +169,36 @@ public class Z extends JavaPlugin {
             }
         }
         return null;
+    }
+    @EventHandler
+    public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
+        String UUID = event.getDamager().getUniqueId().toString();
+        String Uuid = event.getEntity().getUniqueId().toString();
+
+        boolean canceled = true;
+
+        //check infection stat
+        boolean selfIsZombie = false;
+        if(event.getEntity().getType() == EntityType.ZOMBIE) { selfIsZombie = true; }
+        if(!selfIsZombie && event.getEntity().getType() == EntityType.PLAYER) { for(Player p : l.infected) { if (p.getUniqueId().toString() == UUID) { selfIsZombie = true;}}}//replace with Playerz
+
+        boolean attackerIsZombie = false;
+        if (event.getDamager().getType() == EntityType.ZOMBIE) { attackerIsZombie = true; }
+        if(!attackerIsZombie && event.getDamager().getType() == EntityType.PLAYER) { for(Player p : l.infected) { if (p.getUniqueId().toString() == UUID) { attackerIsZombie = true;}}}
+
+        //cancel if same
+        if((selfIsZombie && attackerIsZombie) || (!selfIsZombie && !attackerIsZombie)) {
+            canceled = true;
+        }
+
+        //cancel
+        if!(overwrite) {
+        if (canceled) {
+            event.setCancelled(true);
+        }
+        } else {
+            event.setCancelled(overwritepvp);
+        }
     }
     public boolean set(Player p, String[] args) {
         int ID = 990;
@@ -182,6 +256,7 @@ public class Z extends JavaPlugin {
             suID++;
         }
         return true;
+
     }
 ///////
     public void onPlayerDeath() {
