@@ -3,17 +3,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.Configuration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.EventListener;
 import java.util.Objects;
 
 
@@ -46,6 +47,7 @@ public class Z extends JavaPlugin {
     @Override
     public void onDisable() {
         Bukkit.getConsoleSender().sendMessage("zP >Zom< disabled");
+        HandlerList.unregisterAll(this);
     }
 
    // @Override
@@ -239,9 +241,6 @@ public class Z extends JavaPlugin {
 
     }
 ///////
-    public void onPlayerDeath() {
-
-    }
     public boolean teleportPlayer(Player p, int x, int y, int z, String world, String server) {
         Location loc = p.getLocation();
         loc.setWorld(Bukkit.getWorld(world));
@@ -264,6 +263,25 @@ public class Z extends JavaPlugin {
     }
     public class o implements Listener {
 
+        @EventHandler
+        public void onEntityDeathEvent(EntityDeathEvent event) {
+
+            if(event != null) {
+
+                Entity pl = event.getEntity();
+                if(pl.getType() == EntityType.PLAYER) {
+
+                    Player p = (Player) pl;
+                    broadcast("nerd died [ " +
+                             p.getDisplayName() +
+                            " ] ");
+                } else {
+                    if(overwrite) {
+                        Bukkit.getConsoleSender().sendMessage("Entity Died [" + pl.getName());
+                    }
+                }
+                }
+        }
         @EventHandler
         public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
             String UUID = event.getDamager().getUniqueId().toString();
