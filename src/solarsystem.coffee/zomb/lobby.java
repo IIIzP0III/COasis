@@ -17,6 +17,7 @@ public class lobby extends Z {
 
     public String Lobbyworld = "Lobby";
     public String Playworld = "Playworld";
+    public config conf = null;
 
     //optimize later
     public void showLobby() {
@@ -60,6 +61,7 @@ public class lobby extends Z {
     }
 
     public void lobbyrun() {
+        conf.clearBlocks();
         for(Player p : infected) {
 
             p.setFoodLevel(9);
@@ -107,5 +109,8 @@ public class lobby extends Z {
         }
         echo(p,infecteds.toString());
 
+    }
+    public void setConf(config conf) {
+        this.conf = conf;
     }
 }

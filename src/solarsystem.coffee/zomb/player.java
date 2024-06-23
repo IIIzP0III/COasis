@@ -12,7 +12,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-
+/*
 public class playerDamageByPlayer extends EntityDamageByEntityEvent {
 
     public playerDamageByPlayer(@NotNull Entity damager, @NotNull Entity damagee, @NotNull EntityDamageEvent.DamageCause cause, @NotNull Map<DamageModifier, Double> modifiers, @NotNull Map<DamageModifier, ? extends Function<? super Double, Double>> modifierFunctions) {
@@ -52,7 +52,6 @@ public class playerDamageByPlayer extends EntityDamageByEntityEvent {
             }
         }
         boolean isfriendly = false;
-        super.get
 
 
 
@@ -76,14 +75,6 @@ public class playerDamageByPlayer extends EntityDamageByEntityEvent {
     }
 
     @Override
-    setDamage
-    @Override
-    @Override
-    public default void damage(double v, Entity entity) {
-
-    }
-
-    @Override
     public default boolean pl(@NonNull Player p) {
 
         p.getPlayer().getLastDamage();
@@ -103,4 +94,4 @@ public class playerDamageByPlayer extends EntityDamageByEntityEvent {
 
         return true;
     }
-}
+}*/

@@ -1,6 +1,7 @@
 package solarsystem.coffee.zomb;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -12,6 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,6 +23,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Objects;
 
 import static jogamp.common.os.elf.SectionArmAttributes.Tag.File;
@@ -53,6 +57,7 @@ public class Z extends JavaPlugin {
 
         try {
             conf.loadConfig();
+            l.setConf(conf);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InvalidConfigurationException e) {
@@ -344,14 +349,34 @@ public class Z extends JavaPlugin {
                 event.setCancelled(overwritepvp);
             }
         }
+        @EventHandler
+        public void onBlockBreakEvent(BlockBreakEvent event) {
+            Player p = event.getPlayer();
+            Block block = event.getBlock();
+            if(event.isCancelled() == false) {
+                if (conf.isPlayerBlocks(p.getUniqueId().toString(), block.getLocation())) {
+                } else { event.setCancelled(true); };
+            }
+            //only allow own placed blockz to break
+        }
+        @EventHandler
+        public void onBlockPlaceEvent(BlockPlaceEvent event) {
+            Player p = event.getPlayer();
+            Block block = event.getBlock();
+            if(event.isCancelled() == false ) {
+                conf.setPlayerBlocks(p.getUniqueId().toString(), block.getLocation());
+            }
+            //add block to own placed blockz
+        }
     }
 
 }
-public class config {
+class config {
     public FileConfiguration conf = new YamlConfiguration();
     public Location[] InfLoc = new Location[99];
     public Location[] SuLoc = new Location[99];
     public Location SpLoc = null;
+    HashMap<String , Location[]> playerBlocks;
 
     public config() {
         conf = Bukkit.getPluginManager().getPlugin("zPZom").getConfig();
@@ -390,6 +415,25 @@ public class config {
         }
         SpLoc = conf.getLocation("SpLoc");
         //load locations
+        return true;
+    }
+    public boolean setPlayerBlocks(String UUID, Location l) {
+        Location[] loc = playerBlocks.get(UUID);
+        loc[loc.length+1] = l;
+        playerBlocks.put(UUID,loc);
+        return true;
+    }
+    public boolean isPlayerBlocks(String UUID, Location pl) {
+        Location[] loc = playerBlocks.get(UUID);
+        boolean isFromPlayer = false;
+        for(Location l : loc) {
+            if(pl == l) { isFromPlayer = true; }
+            break;
+        }
+        return isFromPlayer;
+    }
+    public boolean clearBlocks() {
+        playerBlocks.clear();
         return true;
     }
     public boolean listSpawns(Player p) {
