@@ -372,6 +372,9 @@ public class Z extends JavaPlugin {
 
 }
 class config {
+    public Location LobbyLoc = null;
+    public Location FinalLoc = null;
+
     public FileConfiguration conf = new YamlConfiguration();
     public Location[] InfLoc = new Location[99];
     public Location[] SuLoc = new Location[99];
@@ -382,6 +385,8 @@ class config {
         conf = Bukkit.getPluginManager().getPlugin("zPZom").getConfig();
     }
     public boolean saveConfig() throws IOException {
+        conf.set("LobbyLoc", LobbyLoc);
+        conf.set("FinalLoc", FinalLoc);
         int ID = 0;
         for(Location l : InfLoc) {
             conf.set("InfLoc-" + Integer.toString(ID), l);
@@ -414,7 +419,33 @@ class config {
             }
         }
         SpLoc = conf.getLocation("SpLoc");
+        LobbyLoc = conf.getLocation("LobbyLoc");
+        FinalLoc = conf.getLocation("FinalLoc");
         //load locations
+        return true;
+    }
+    public Location getLobbyLoc() {
+        return LobbyLoc;
+    }
+    public Location getFinalLoc() {
+        return FinalLoc;
+    }
+    public boolean setLobbyLoc(Player p) {
+        LobbyLoc = p.getLocation();
+        try {
+            saveConfig();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
+    public boolean setFinalLoc(Player p) {
+        FinalLoc = p.getLocation();
+        try {
+            saveConfig();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return true;
     }
     public boolean setPlayerBlocks(String UUID, Location l) {
