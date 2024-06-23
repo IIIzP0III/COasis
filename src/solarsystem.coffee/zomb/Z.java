@@ -3,6 +3,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -14,7 +17,9 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Objects;
 
 
@@ -127,6 +132,14 @@ public class Z extends JavaPlugin {
                             p = getPlayerbyString(args[2]);
                             if (p != null) {
                                 switch (args[1]) {
+                                    case "spawnInf":
+                                        config.setNewInfSpawn(p);
+                                    case "spawnSu":
+                                        config.setNewSuSpawn(p);
+                                    case "spawnsp":
+                                        config.setNewSpSpawn(p);
+                                    case "listSpawns":
+                                        config.listSpawn();
                                     case "Inf":
                                             set(p, args);
                                             player.sendMessage(p.getDisplayName() + "set to infected");
@@ -151,8 +164,8 @@ public class Z extends JavaPlugin {
                         if(args[0].equalsIgnoreCase("help")) {
                             String[] s = new String[13];
                             s[0] = "<<< Zom | Commands >>> ";
-                            s[1] = "/runZom";
-                            s[2] = "/Lobby";
+                            s[1] = "/runZom | /zom ";
+                            s[2] = "/zom Lobby ";
                             s[3] = "/set (Inf|Su|sp) Player";
                             s[4] = "/baa";
                             player.sendMessage(s);
@@ -269,18 +282,23 @@ public class Z extends JavaPlugin {
             if(event != null) {
 
                 Entity pl = event.getEntity();
-                if(pl.getType() == EntityType.PLAYER) {
+                if (pl.getType() == EntityType.PLAYER) {
 
                     Player p = (Player) pl;
-                    broadcast("nerd died [ " +
-                             p.getDisplayName() +
-                            " ] ");
+                    broadcast(
+                            "nerd died [ " +
+                                    p.getDisplayName() +
+                                    " ] "
+                    );
+
                 } else {
-                    if(overwrite) {
+
+                    if (overwrite) {
                         Bukkit.getConsoleSender().sendMessage("Entity Died [" + pl.getName());
                     }
+
                 }
-                }
+            }
         }
         @EventHandler
         public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
@@ -313,5 +331,63 @@ public class Z extends JavaPlugin {
             }
         }
     }
+
+}
+public class config {
+    public FileConfiguration conf = new YamlConfiguration();
+    public Location[] InfLoc = new Location[99];
+    public Location[] SuLoc = new Location[99];
+    public Location SpLoc = null;
+
+    public config() {
+        conf = Bukkit.getPluginManager().getPlugin("zPZom").getConfig();
+    }
+    public boolean saveConfig() throws IOException {
+        int ID = 0;
+        for(Location l : InfLoc) {
+            conf.set("InfLoc-" + Integer.toString(ID), l);
+            ID++;
+        }
+        for(Location l : SuLoc) {
+            conf.set("InfLoc-" + Integer.toString(ID), l);
+        }
+        conf.set("SpLoc", SpLoc);
+        conf.save("Locationz.yml");
+        //write locations
+        return true;
+    }
+    public boolean loadConfig() {
+        //load locations
+        return true;
+    }
+
+    public Location[] getInfSpawns() {
+        return null;
+    }
+    public Location[] getSuSpawns() {
+        return null;
+    }
+    public Location getSpSpawn() {
+        return null;
+    }
+    public boolean setNewInfSpawn(Player p) {
+        return true;
+    }
+    public boolean setNewSuSpawn(Player p) {
+        return true;
+    }
+    public boolean setNewSpSpawn(Player p) {
+        Location loc = p.getLocation();
+        double x = loc.getX();
+        double y = loc.getY();
+        double z = loc.getZ();
+        float Pitch = loc.getPitch();
+        float Yaw = loc.getYaw();
+        String World = loc.getWorld().toString();
+        SpLoc = p.getLocation();
+        saveConfig();
+        return true;
+    }
+
 
 }
