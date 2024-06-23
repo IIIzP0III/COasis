@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.Objects;
 
+import static jogamp.common.os.elf.SectionArmAttributes.Tag.File;
+
 
 public class Z extends JavaPlugin {
 
@@ -49,6 +51,13 @@ public class Z extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage("Version: " + ver);
         getServer().getPluginManager().registerEvents(new o(), this);
 
+        try {
+            conf.loadConfig();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
     @Override
     public void onDisable() {
@@ -132,30 +141,34 @@ public class Z extends JavaPlugin {
                             Player p = null;
                             p = getPlayerbyString(args[2]);
                             if (p != null) {
-                                switch (args[1]) {
-                                    case "spawnInf":
-                                        conf.setNewInfSpawn(p);
-                                    case "spawnSu":
-                                        conf.setNewSuSpawn(p);
-                                    case "spawnsp":
-                                        conf.setNewSpSpawn(p);
-                                    case "listSpawns":
-                                        conf.listSpawn(p);
-                                    case "Inf":
+                                try {
+                                    switch (args[1]) {
+                                        case "spawnInf":
+                                            conf.setNewInfSpawn(p);
+                                        case "spawnSu":
+                                            conf.setNewSuSpawn(p);
+                                        case "spawnsp":
+                                                conf.setNewSpSpawn(p);
+                                        case "listSpawns":
+                                            conf.listSpawns(p);
+                                        case "Inf":
                                             set(p, args);
                                             player.sendMessage(p.getDisplayName() + "set to infected");
-                                        return true;
-                                    case "Su":
+                                            return true;
+                                        case "Su":
                                             set(p, args);
-                                            player.sendMessage(p.getDisplayName() +"set to su");
-                                        return true;
-                                    case "sp":
+                                            player.sendMessage(p.getDisplayName() + "set to su");
+                                            return true;
+                                        case "sp":
                                             set(p, args);
                                             player.sendMessage(p.getDisplayName() + "set to spectator");
-                                        return true;
-                                    default:
-                                        player.sendMessage("Invalid arguments");
-                                        break;
+                                            return true;
+                                        default:
+                                            player.sendMessage("Invalid arguments");
+                                            break;
+                                    }
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
                                 }
                             } else {
                                 player.sendMessage("player not found");
@@ -350,14 +363,32 @@ public class config {
             ID++;
         }
         for(Location l : SuLoc) {
-            conf.set("InfLoc-" + Integer.toString(ID), l);
+            conf.set("SuLoc-" + Integer.toString(ID), l);
         }
         conf.set("SpLoc", SpLoc);
         conf.save("Locationz.yml");
         //write locations
         return true;
     }
-    public boolean loadConfig() {
+    public boolean loadConfig() throws IOException, InvalidConfigurationException {
+        conf.load("Locationz.yml");
+        int ID = 0;
+        boolean load = true;
+        while(load) {
+            InfLoc[ID] = conf.getLocation("InfLoc-" + Integer.toString(ID));
+            if(InfLoc[ID] == null) {
+                load = false;
+            }
+        }
+        ID = 0;
+        load = true;
+        while(load) {
+            SuLoc[ID] = conf.getLocation("SuLoc-" + Integer.toString(ID));
+            if(SuLoc[ID] == null) {
+                load = false;
+            }
+        }
+        SpLoc = conf.getLocation("SpLoc");
         //load locations
         return true;
     }
@@ -400,7 +431,7 @@ public class config {
     public boolean setNewSuSpawn(Player p) {
         return true;
     }
-    public boolean setNewSpSpawn(Player p) {
+    public boolean setNewSpSpawn(Player p) throws IOException{
         Location loc = p.getLocation();
         double x = loc.getX();
         double y = loc.getY();
