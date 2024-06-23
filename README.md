@@ -4,4 +4,6 @@ Spigot 1.20.4 - 1.20.5
 
 Plugin developed by zP0
 
-state of completion: 7%
+state of completion: 34%
+
+originally created for mcoasis
