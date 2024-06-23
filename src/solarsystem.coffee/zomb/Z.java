@@ -23,6 +23,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -376,8 +377,8 @@ class config {
     public Location FinalLoc = null;
 
     public FileConfiguration conf = new YamlConfiguration();
-    public Location[] InfLoc = new Location[99];
-    public Location[] SuLoc = new Location[99];
+    public ArrayList<Location> InfLoc = new ArrayList<>();
+    public ArrayList<Location> SuLoc = new ArrayList<>();
     public Location SpLoc = null;
     HashMap<String , Location[]> playerBlocks;
 
@@ -397,7 +398,6 @@ class config {
         }
         conf.set("SpLoc", SpLoc);
         conf.save("Locationz.yml");
-        //write locations
         return true;
     }
     public boolean loadConfig() throws IOException, InvalidConfigurationException {
@@ -405,19 +405,24 @@ class config {
         int ID = 0;
         boolean load = true;
         while(load) {
-            InfLoc[ID] = conf.getLocation("InfLoc-" + Integer.toString(ID));
-            if(InfLoc[ID] == null) {
+            Location l = conf.getLocation("InfLoc-" + Integer.toString(ID));
+            if(l != null) {
+                InfLoc.add(l);
+            } else {
                 load = false;
             }
         }
+
         ID = 0;
         load = true;
         while(load) {
-            SuLoc[ID] = conf.getLocation("SuLoc-" + Integer.toString(ID));
-            if(SuLoc[ID] == null) {
+            Location l = conf.getLocation("SuLoc-" + Integer.toString(ID));
+            if(l != null) {
+            SuLoc.add(l); } else {
                 load = false;
             }
         }
+
         SpLoc = conf.getLocation("SpLoc");
         LobbyLoc = conf.getLocation("LobbyLoc");
         FinalLoc = conf.getLocation("FinalLoc");
@@ -491,29 +496,24 @@ class config {
         return s;
     }
 
-    public Location[] getInfSpawns() {
-        return null;
+    public ArrayList<Location> getInfSpawns() {
+        return InfLoc;
     }
-    public Location[] getSuSpawns() {
-        return null;
+    public ArrayList<Location> getSuSpawns() {
+        return SuLoc;
     }
     public Location getSpSpawn() {
-        return null;
+        return SpLoc;
     }
     public boolean setNewInfSpawn(Player p) {
+        InfLoc.add(p.getLocation());
         return true;
     }
     public boolean setNewSuSpawn(Player p) {
+        SuLoc.add(p.getLocation());
         return true;
     }
     public boolean setNewSpSpawn(Player p) throws IOException{
-        Location loc = p.getLocation();
-        double x = loc.getX();
-        double y = loc.getY();
-        double z = loc.getZ();
-        float Pitch = loc.getPitch();
-        float Yaw = loc.getYaw();
-        String World = loc.getWorld().toString();
         SpLoc = p.getLocation();
         saveConfig();
         return true;
