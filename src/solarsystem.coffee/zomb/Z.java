@@ -26,6 +26,7 @@ import java.util.Objects;
 public class Z extends JavaPlugin {
 
     lobby l = new lobby();
+    config conf = new config();
     public Player[] survivors = new Player[990];
     public Player[] infected = new Player[990];
     public Player[] spectator = new Player[990];
@@ -133,13 +134,13 @@ public class Z extends JavaPlugin {
                             if (p != null) {
                                 switch (args[1]) {
                                     case "spawnInf":
-                                        config.setNewInfSpawn(p);
+                                        conf.setNewInfSpawn(p);
                                     case "spawnSu":
-                                        config.setNewSuSpawn(p);
+                                        conf.setNewSuSpawn(p);
                                     case "spawnsp":
-                                        config.setNewSpSpawn(p);
+                                        conf.setNewSpSpawn(p);
                                     case "listSpawns":
-                                        config.listSpawn();
+                                        conf.listSpawn(p);
                                     case "Inf":
                                             set(p, args);
                                             player.sendMessage(p.getDisplayName() + "set to infected");
@@ -359,6 +360,29 @@ public class config {
     public boolean loadConfig() {
         //load locations
         return true;
+    }
+    public boolean listSpawns(Player p) {
+
+        StringBuilder s = new StringBuilder();
+
+        s.append("Infected Spawns");
+        for(Location l : InfLoc) {
+            appendLoc(s,l);
+        }
+        s.append("Survivor Spawns");
+        for(Location l : SuLoc) {
+            appendLoc(s,l);
+        }
+        s.append("Spectator Spawn");
+        appendLoc(s,SpLoc);
+
+        p.sendMessage(s.toString());
+
+        return true;
+    }
+    public StringBuilder appendLoc(StringBuilder s, Location l) {
+        s.append("World: " + l.getWorld().toString() + " x: " + l.getX() + " y: " + l.getY() + " z: " + l.getZ());
+        return s;
     }
 
     public Location[] getInfSpawns() {
