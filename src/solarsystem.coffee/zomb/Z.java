@@ -69,6 +69,7 @@ public class Z extends JavaPlugin {
     public void onDisable() {
         Bukkit.getConsoleSender().sendMessage("zP >Zom< disabled");
         HandlerList.unregisterAll(this);
+            l.setConf(conf);
     }
 
    // @Override
@@ -399,33 +400,50 @@ class config {
     public ArrayList<Location> InfLoc = new ArrayList<>();
     public ArrayList<Location> SuLoc = new ArrayList<>();
     public ArrayList<Location> SpLoc = null;
-    HashMap<String , Location[]> playerBlocks;
+    HashMap<String, Location[]> playerBlocks;
 
     public config() {
         conf = Bukkit.getPluginManager().getPlugin("zPZom").getConfig();
     }
+
     public boolean saveConfig() throws IOException {
-        conf.set("LobbyLoc", LobbyLoc);
-        conf.set("FinalLoc", FinalLoc);
         int ID = 0;
-        for(Location l : InfLoc) {
+        for (Location l : LobbyLoc) {
+            conf.set("LobbyLoc-" + Integer.toString(ID), l);
+            ID++;
+        }
+        ID = 0;
+        for (Location l : FinalLoc) {
+            conf.set("FinalLoc-" + Integer.toString(ID), l);
+            ID++;
+        }
+        ID = 0;
+        for (Location l : InfLoc) {
             conf.set("InfLoc-" + Integer.toString(ID), l);
             ID++;
         }
-        for(Location l : SuLoc) {
+        ID = 0;
+        for (Location l : SuLoc) {
             conf.set("SuLoc-" + Integer.toString(ID), l);
+            ID++;
         }
-        conf.set("SpLoc", SpLoc);
+        ID = 0;
+        for (Location l : SpLoc) {
+            conf.set("SpLoc-" + Integer.toString(ID), l);
+            ID++;
+        }
         conf.save("Locationz.yml");
         return true;
     }
+
     public boolean loadConfig() throws IOException, InvalidConfigurationException {
         conf.load("Locationz.yml");
         int ID = 0;
         boolean load = true;
-        while(load) {
+
+        while (load) {
             Location l = conf.getLocation("InfLoc-" + Integer.toString(ID));
-            if(l != null) {
+            if (l != null) {
                 InfLoc.add(l);
             } else {
                 load = false;
@@ -434,17 +452,44 @@ class config {
 
         ID = 0;
         load = true;
-        while(load) {
+        while (load) {
             Location l = conf.getLocation("SuLoc-" + Integer.toString(ID));
-            if(l != null) {
-            SuLoc.add(l); } else {
+            if (l != null) {
+                SuLoc.add(l);
+            } else {
                 load = false;
             }
         }
-
-        SpLoc.add(conf.getLocation("SpLoc"));
+        ID = 0;
+        load = true;
+        while (load) {
+            Location l = conf.getLocation("SpLoc-" + Integer.toString(ID));
+            if (l != null) {
+                SpLoc.add(conf.getLocation("SpLoc"));
+            } else {
+                load = false;
+            }
+        }
+        ID = 0;
+        load = true;
+        while (load) {
+            Location l = conf.getLocation("LobbyLoc-" + Integer.toString(ID));
+            if (l != null) {
         LobbyLoc.add(conf.getLocation("LobbyLoc"));
-        FinalLoc.add(conf.getLocation("FinalLoc"));
+    } else {
+                load = false;
+            }
+}
+        ID = 0;
+        load = true;
+        while(load) {
+            Location l = conf.getLocation("FinalLoc" + Integer.toString(ID));
+            if (l != null) {
+                FinalLoc.add(conf.getLocation("FinalLoc"));
+            } else {
+                load = false;
+            }
+        }
         //load locations
         return true;
     }
