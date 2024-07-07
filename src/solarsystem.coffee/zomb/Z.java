@@ -217,46 +217,37 @@ public class Z extends JavaPlugin {
         return null;
     }
     public boolean set(Player p, String[] args) {
-        int ID = 990;
         String UuID = p.getUniqueId().toString();
         if (args[3].equalsIgnoreCase("Inf")) {
-            for (Player pl : infected) {
-                if (pl != null) {
-                    if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
-                        return false;
-                    }
-                }
-            }
+            if(isInPlayer(p.getUniqueId().toString(), infected) == false) {
             infected.add(p);
-            infID++;
+            }
             removePlayer(UuID, survivors);
             removePlayer(UuID, spectator);
             return true;
         } else if (args[3].equalsIgnoreCase("Su")) {
-            for (Player pl : survivors) {
-                if (pl != null) {
-                    if (Objects.equals(pl.getUniqueId().toString(), UuID)) {
-                        return false;
-                    }
-                }
+            if(isInPlayer(p.getUniqueId().toString(), survivors) == false) {
+
+                survivors.add(p);
             }
-            survivors.add(p);
-            surID++;
             removePlayer(UuID, infected);
             removePlayer(UuID, spectator);
             return true;
         } else if (args[3].equalsIgnoreCase("sp")) {
-            for(Player pl : spectator) {
-                if (pl != null) {
-                    if(Objects.equals(pl.getUniqueId().toString(), UuID)) {
-                        return false;
-                    }
-                }
+            if(isInPlayer(p.getUniqueId().toString(),spectator) == false) {
+                spectator.add(p);
             }
-            spectator.add(p);
             removePlayer(UuID, survivors);
             removePlayer(UuID, infected);
             return true;
+        }
+        return false;
+    }
+    public boolean isInPlayer(String UuID,ArrayList<Player> playercontainer) {
+        for(Player p : playercontainer) {
+            if(p.getUniqueId().toString() == UuID) {
+                return true;
+            }
         }
         return false;
     }
@@ -475,11 +466,11 @@ class config {
         while (load) {
             Location l = conf.getLocation("LobbyLoc-" + Integer.toString(ID));
             if (l != null) {
-        LobbyLoc.add(conf.getLocation("LobbyLoc"));
-    } else {
+                LobbyLoc.add(conf.getLocation("LobbyLoc"));
+            } else {
                 load = false;
             }
-}
+        }
         ID = 0;
         load = true;
         while(load) {

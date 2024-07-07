@@ -17,6 +17,8 @@ public class lobby extends Z {
 
     public ArrayList<Player> Survivors = new ArrayList<>();
     public ArrayList<Player> Infected = new ArrayList<>();
+    public ArrayList<InfPlayer> InfPlayerz = new ArrayList<>();
+
 
     public boolean runZom = false;
 
