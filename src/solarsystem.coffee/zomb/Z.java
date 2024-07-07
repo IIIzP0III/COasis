@@ -17,6 +17,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -362,17 +363,42 @@ public class Z extends JavaPlugin {
             }
             //add block to own placed blockz
         }
+        @EventHandler
+        public  void onPlayerJoinEvent(PlayerJoinEvent baaa) {
+            Player p = baaa.getPlayer();
+            if(l.getrunning()) {
+                if(l.getisPlayerIn(p.getUniqueId().toString())) {
+                    l.spawn(p);
+                }
+            }
+        }
     }
 
 }
+
+class InfPlayer {
+    public Player p = null;
+    public Integer Inf = 0;
+    public boolean dead = false;
+    public boolean inround = false;
+    public String UUID = "";
+
+    public InfPlayer(Player p, Integer Info) {
+        this.p = p;
+        UUID = p.getUniqueId().toString();
+        Inf = Info;
+    }
+
+
+}
 class config {
-    public Location LobbyLoc = null;
-    public Location FinalLoc = null;
+    public ArrayList<Location> LobbyLoc = null;
+    public ArrayList<Location> FinalLoc = null;
 
     public FileConfiguration conf = new YamlConfiguration();
     public ArrayList<Location> InfLoc = new ArrayList<>();
     public ArrayList<Location> SuLoc = new ArrayList<>();
-    public Location SpLoc = null;
+    public ArrayList<Location> SpLoc = null;
     HashMap<String , Location[]> playerBlocks;
 
     public config() {
@@ -416,20 +442,20 @@ class config {
             }
         }
 
-        SpLoc = conf.getLocation("SpLoc");
-        LobbyLoc = conf.getLocation("LobbyLoc");
-        FinalLoc = conf.getLocation("FinalLoc");
+        SpLoc.add(conf.getLocation("SpLoc"));
+        LobbyLoc.add(conf.getLocation("LobbyLoc"));
+        FinalLoc.add(conf.getLocation("FinalLoc"));
         //load locations
         return true;
     }
-    public Location getLobbyLoc() {
+    public ArrayList<Location> getLobbyLoc() {
         return LobbyLoc;
     }
-    public Location getFinalLoc() {
+    public ArrayList<Location> getFinalLoc() {
         return FinalLoc;
     }
     public boolean setLobbyLoc(Player p) {
-        LobbyLoc = p.getLocation();
+        LobbyLoc.add(p.getLocation());
         try {
             saveConfig();
         } catch (IOException e) {
@@ -438,7 +464,7 @@ class config {
         return true;
     }
     public boolean setFinalLoc(Player p) {
-        FinalLoc = p.getLocation();
+        FinalLoc.add(p.getLocation());
         try {
             saveConfig();
         } catch (IOException e) {
@@ -478,8 +504,9 @@ class config {
             appendLoc(s,l);
         }
         s.append("Spectator Spawn");
-        appendLoc(s,SpLoc);
-
+        for(Location l : SpLoc) {
+            appendLoc(s,l);
+        }
         p.sendMessage(s.toString());
 
         return true;
@@ -495,7 +522,7 @@ class config {
     public ArrayList<Location> getSuSpawns() {
         return SuLoc;
     }
-    public Location getSpSpawn() {
+    public ArrayList<Location> getSpSpawn() {
 
         return SpLoc;
     }
@@ -508,7 +535,7 @@ class config {
         return true;
     }
     public boolean setNewSpSpawn(Player p) throws IOException{
-        SpLoc = p.getLocation();
+        SpLoc.add(p.getLocation());
         saveConfig();
         return true;
     }
