@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.awt.image.AreaAveragingScaleFilter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -13,9 +14,7 @@ public class lobby extends Z {
     public ArrayList<Player> Players = new ArrayList<>();
 
     public ArrayList<Player> Survivors = new ArrayList<>();
-    public Player[] infected = new Player[990];
     public ArrayList<Player> Infected = new ArrayList<>();
-    public Player[] spectator = new Player[990];
 
     public String Lobbyworld = "Lobby";
     public String Playworld = "Playworld";
@@ -30,15 +29,9 @@ public class lobby extends Z {
 
     public lobby InLobby(){
 
-        survivors = new Player[990];
-        infected = new Player[990];
-        spectator = new Player[990];
-        
-        int ID = 0;
         for(Player p : Bukkit.getOnlinePlayers()) {
             Players.add(p);
             broadcast("Player [ " + p.getName() + " ] added to lobby");
-            ID++;
         }
         
         return this;
@@ -51,11 +44,9 @@ public class lobby extends Z {
         for(Player p : Players) {
             if(p != null) {
                 if (rnd.nextInt() > 0.33) {
-                    survivors[surID] = p;
                     Survivors.add(p);
                     surID++;
                 } else {
-                    infected[infID] = p;
                     infID++;
                     Infected.add(p);
                 }

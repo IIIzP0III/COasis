@@ -20,6 +20,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -34,13 +35,11 @@ public class Z extends JavaPlugin {
 
     lobby l = new lobby();
     config conf = new config();
-    public Player[] survivors = new Player[990];
-    public Player[] infected = new Player[990];
-    public Player[] spectator = new Player[990];
+    public ArrayList<Player> survivors = new ArrayList<>();
+    public ArrayList<Player> infected = new ArrayList<>();
+    public ArrayList<Player> spectator = new ArrayList<>();
 
-    public String Lobbyworld = "Lobby";
-
-    public String ver = "0.1.3";
+    public String ver = "0.1.4";
 
 
 
@@ -52,7 +51,7 @@ public class Z extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Bukkit.getConsoleSender().sendMessage("zP >Zom< loaded");
+        Bukkit.getConsoleSender().sendMessage("Plugin zP >Zom< loaded");
         Bukkit.getConsoleSender().sendMessage("Version: " + ver);
         getServer().getPluginManager().registerEvents(new o(), this);
 
@@ -226,7 +225,7 @@ public class Z extends JavaPlugin {
                     }
                 }
             }
-            infected[infID] = p;
+            infected.add(p);
             infID++;
             removePlayer(UuID, survivors);
             removePlayer(UuID, spectator);
@@ -239,7 +238,7 @@ public class Z extends JavaPlugin {
                     }
                 }
             }
-            survivors[surID] = p;
+            survivors.add(p);
             surID++;
             removePlayer(UuID, infected);
             removePlayer(UuID, spectator);
@@ -252,28 +251,22 @@ public class Z extends JavaPlugin {
                     }
                 }
             }
-            spectator[spID] = p;
-            spID++;
+            spectator.add(p);
             removePlayer(UuID, survivors);
             removePlayer(UuID, infected);
             return true;
         }
         return false;
     }
-    public boolean removePlayer(String UuID, Player[] playercontainer) {
-        int suID = 0;
+    public boolean removePlayer(String UuID, ArrayList<Player> playercontainer) {
         for(Player p : playercontainer) {
-            if (p != null) {
                 if (Objects.equals(p.getUniqueId().toString(), UuID)) {
-                    playercontainer[suID] = null;
-                }
+                    playercontainer.remove(p);
             }
-            suID++;
         }
         return true;
-
     }
-///////
+
     public boolean teleportPlayer(Player p, int x, int y, int z, String world, String server) {
         Location loc = p.getLocation();
         loc.setWorld(Bukkit.getWorld(world));
@@ -503,6 +496,7 @@ class config {
         return SuLoc;
     }
     public Location getSpSpawn() {
+
         return SpLoc;
     }
     public boolean setNewInfSpawn(Player p) {
