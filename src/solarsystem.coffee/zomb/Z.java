@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -17,7 +18,10 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -25,6 +29,7 @@ import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -360,7 +365,39 @@ public class Z extends JavaPlugin {
             Player p = baaa.getPlayer();
             if(l.getrunning()) {
                 if(l.getisPlayerIn(p.getUniqueId().toString())) {
+                    l.setPlayerOnline(p.getUniqueId().toString(), true);
                     l.spawn(p);
+                }
+            }
+            return;
+        }
+        public void onPlayerQuitEvent(PlayerQuitEvent event) {
+            Player p = event.getPlayer();
+            if(l.getrunning()) {
+                if (l.getisPlayerIn(p.getUniqueId().toString())) {
+                    l.setPlayerOnline(p.getUniqueId().toString(),false);
+                }
+            }
+            return;
+        }
+        public void onPlayerKickEvent(PlayerKickEvent event) {
+            Player p = event.getPlayer();
+            if(l.getrunning()) {
+                if(l.getisPlayerIn(p.getUniqueId().toString())) {
+                    l.setPlayerOnline(p.getUniqueId().toString(),false);
+                }
+            }
+            return;
+        }
+        public void onSelectPlayer(EntityTargetLivingEntityEvent event) {
+            if(event.getEntity().getType() == EntityType.ZOMBIE) {
+                LivingEntity pl = event.getTarget();
+                if(pl.getType() == EntityType.PLAYER) {
+                    String UUID = pl.getUniqueId().toString();
+                    if(l.getisPlayerIn(UUID)) { //update with l.getIsInfected
+                        Entity Zombie = event.getEntity();
+                        event.setTarget(l.getNearestSurvivor(Zombie.getLocation()));
+                    }
                 }
             }
         }
@@ -371,9 +408,11 @@ public class Z extends JavaPlugin {
 class InfPlayer {
     public Player p = null;
     public Integer Inf = 0;
-    public boolean dead = false;
+    public boolean alive = true;
     public boolean inround = false;
     public String UUID = "";
+    public int Status = 0;
+    public boolean online = true;
 
     public InfPlayer(Player p, Integer Info) {
         this.p = p;

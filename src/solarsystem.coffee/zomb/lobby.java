@@ -17,14 +17,12 @@ public class lobby extends Z {
 
     public ArrayList<Player> Survivors = new ArrayList<>();
     public ArrayList<Player> Infected = new ArrayList<>();
-    public ArrayList<InfPlayer> InfPlayerz = new ArrayList<>();
+    public HashMap<String, InfPlayer> InfPlayerz = new HashMap<String,InfPlayer>();
 
 
     public boolean runZom = false;
 
-    public String Lobbyworld = "Lobby";
     public HashMap<String, Integer> PlayerInfo = new HashMap<String, Integer>();
-    public ArrayList<InfPlayer> InfPlayerz= new ArrayList<>();
     public String Playworld = "Playworld";
     public config conf = null;
 
@@ -63,7 +61,18 @@ public class lobby extends Z {
             }
         }
     }
+    public Player getNearestSurvivor(Location loc) {
 
+        Player nearest = null;
+        double dis = 0;
+        for(Player p :Survivors) {
+            if(nearest == null || p.getLocation().distance(loc)<dis) {
+                nearest = p;
+                dis = p.getLocation().distance(loc);
+            }
+        }
+        return nearest;
+    }
     public void lobbyrun() {
 
         runZom = true;
@@ -133,6 +142,19 @@ public class lobby extends Z {
             }
         }
         return false;
+    }
+    public boolean setPlayerAlive(Player p, boolean alive) {
+        String UUID = p.getUniqueId().toString();
+        for(InfPlayer pl : InfPlayerz.values()) {
+            pl.alive = alive;
+
+        }
+        InfPlayerz.get(UUID).alive = alive;
+        return true;
+    }
+    public boolean setPlayerOnline(String UUID, boolean online) {
+        InfPlayerz.get(UUID).online = online;
+        return true;
     }
     public boolean spawn(Player p) {
         if(runZom == true) {
